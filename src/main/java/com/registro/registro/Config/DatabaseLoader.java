@@ -15,10 +15,13 @@ public class DatabaseLoader {
     @Bean
     public CommandLineRunner loadDatabase(JdbcTemplate jdbcTemplate) {
         return args -> {
-            // Ejecutar el script SQL al inicio de la aplicación
-            ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-            populator.addScript(new ClassPathResource("data.sql"));
-            populator.execute(Objects.requireNonNull(jdbcTemplate.getDataSource()));
+            Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM carrera", Integer.class);
+            if (count == 0) {
+                ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+                populator.addScript(new ClassPathResource("data.sql"));
+                populator.execute(Objects.requireNonNull(jdbcTemplate.getDataSource()));
+            }
         };
     }
+
 }
